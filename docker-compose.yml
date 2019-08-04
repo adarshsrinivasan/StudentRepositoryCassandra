@@ -1,0 +1,22 @@
+version: '2'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  cassandra:
+    image: 'bitnami/cassandra:latest'
+    ports:
+      - "9042:9042"
+    networks:
+      - app-tier
+
+  student-repository:
+    image: 'student-repository:latest'
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "cassandra:10.0.2.15"
+    networks:
+      - app-tier
