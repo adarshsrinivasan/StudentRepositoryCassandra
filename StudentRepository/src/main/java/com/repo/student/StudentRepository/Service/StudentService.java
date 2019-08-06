@@ -1,10 +1,8 @@
 package com.repo.student.StudentRepository.Service;
 
-import com.repo.student.StudentRepository.Model.Navigator;
 import com.repo.student.StudentRepository.Model.SortOrder;
 import com.repo.student.StudentRepository.Model.Student;
 import java.util.List;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * Created by AdarshSrinivasan
@@ -19,7 +17,7 @@ public interface StudentService {
 
   public Student getAStudent(String department, Long roll);
 
-//  public void updateStudentRecord(Student student);
+  public void updateStudentRecord(Student student);
 
   public void deleteAStudent(String department, Long roll);
 

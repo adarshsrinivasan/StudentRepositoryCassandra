@@ -3,17 +3,19 @@ package com.repo.student.StudentRepository.Service.Impl;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.repo.student.StudentRepository.Exceptions.InvalidDataException;
+import com.repo.student.StudentRepository.Exceptions.StudentNotFound;
 import com.repo.student.StudentRepository.Model.SortOrder;
 import com.repo.student.StudentRepository.Model.Student;
 import com.repo.student.StudentRepository.Service.StudentService;
-import com.repo.student.StudentRepository.Utils.CassandraUtils;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.cassandra.core.UpdateOptions;
 import org.springframework.data.cassandra.core.query.Criteria;
 import org.springframework.data.cassandra.core.query.Query;
+import org.springframework.data.cassandra.core.query.Update;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,13 +27,11 @@ public class StudentServiceImpl implements StudentService {
   private static final Logger LOGGER = LoggerFactory.getLogger(StudentServiceImpl.class);
 
   @Autowired
-  private CassandraUtils cassandraUtils;
-
-  @Autowired
   private CassandraTemplate cassandraTemplate;
 
   public void createStudentRecord(Student student){
     LOGGER.info("Insert Student : {}", student.getRoll());
+    student.setYear(2018); //Constant value across all records
     cassandraTemplate.insert(student);
   }
 
@@ -64,6 +64,9 @@ public class StudentServiceImpl implements StudentService {
 
     LOGGER.info("Getting all students Students by : {}", fetchQuery);
     List<Student> resultStudents = cassandraTemplate.select(fetchQuery, Student.class);
+    if(resultStudents.isEmpty()){
+      return resultStudents;
+    }
 
     return resultStudents.subList(resultStudents.size() - recordsPerPage,
         (resultStudents.size() - 1));
@@ -79,14 +82,55 @@ public class StudentServiceImpl implements StudentService {
     return cassandraTemplate.selectOne(select, Student.class);
   }
 
-//  public void updateStudentRecord(Student student){
-//    Student storedStudent = getAStudent(student.getDepartment(), student.getRoll());
-//    storedStudent.setClub(student.getClub());
-//    storedStudent.setFirstName(student.getFirstName());
-//    storedStudent.setLastName(student.getLastName());
-//      LOGGER.info("Updating student  :{}", student.getRoll());
-//    cassandraTemplate.update(storedStudent);
-//  }
+  public void updateStudentRecord(Student student){
+    Student storedStudent = getAStudent(student.getDepartment(), student.getRoll());
+    if(storedStudent == null){
+      throw new StudentNotFound("No student found for the given request");
+    }
+    LOGGER.info("Updating student : {}", student.getRoll());
+    Query query = Query
+        .query(
+            Criteria
+                .where("department")
+                .is(student.getDepartment())
+        ).and(
+            Criteria
+                .where("roll")
+                .is(student.getRoll())
+        ).and(
+            Criteria
+                .where("year")
+                .is(student.getYear())
+        );
+    Update update = null;
+    if(!storedStudent.getClub().equals(student.getClub())){
+      update = Update.update("club", student.getClub());
+    }
+    if(!storedStudent.getFirstName().equals(student.getFirstName())){
+      if(update == null){
+        update = Update.update("first_name", student.getFirstName());
+      }
+      else {
+        update.set("first_name", student.getFirstName());
+      }
+    }
+    if(!storedStudent.getLastName().equals(storedStudent.getLastName())){
+      if(update == null){
+        update = Update.update("last_name", student.getLastName());
+      }
+      else {
+        update.set("last_name", student.getLastName());
+      }
+    }
+    if(!storedStudent.getYear().equals(student.getYear())){
+      throw new InvalidDataException("Invalid Update on field \"year\"");
+    }
+    if(update == null){
+      LOGGER.info("Nothing to Update, stored data and request data are same");
+      return;
+    }
+    cassandraTemplate.update(query, update, Student.class);
+  }
 
   public void deleteAStudent(String department, Long roll){
     Query query =

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Table("student")
 public class Student {
 
-  @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
+  @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED,  ordering = Ordering.ASCENDING)
   private Long roll;
 
   @Column("first_name")
@@ -22,7 +22,7 @@ public class Student {
   @Column("last_name")
   private String lastName;
 
-  @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED, ordering = Ordering.ASCENDING)
+  @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
   private String department;
 
   @Column
