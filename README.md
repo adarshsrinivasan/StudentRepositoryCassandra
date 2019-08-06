@@ -5,7 +5,7 @@
 This is a Java program of a student data repository. It stores and catalogs the data persisted in Cassandra DB and the data can be sorted by any column with pagination.
 
 ## Student table metadata
-**Field Name**        **Type**        **Type Of Key**       **Description**
+
 1. department :           text :         Partition Key :         Department to which the student is enrolled to. Since the
                                                             distribution of students is equal among the department, 
                                                             it is chosen as the partition key as there will be uniform 
