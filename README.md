@@ -26,7 +26,7 @@ This is a Java program of a student data repository. It stores and catalogs the 
 6. club                 text                -               Club to which the student belongs to.
 
 
-API Collection (Postman collection link) : https://www.getpostman.com/collections/8c752e05b4f139885116 
+API Collection (Postman collection link) : https://www.getpostman.com/collections/8c752e05b4f139885116
 
 ## Setting up and starting the program
 1. Adding host Ip in docker-compose.yml
@@ -140,3 +140,12 @@ docker-compose up student-repository
 **Method:** DELETE
 **URL:** http://localhost:8080/api/v1/student
 **Response code:** 200 OK
+
+## Important Code
+- Cassandra configuration: StudentRepositoryCassandra/StudentRepository/src/main/java/com/repo/student/StudentRepository/Configuration/*
+
+- KetSpace, Table and Materialized view creation: StudentRepositoryCassandra/StudentRepository/src/main/java/com/repo/student/StudentRepository/Utils/CassandraUtils.java
+
+- Cassandra configuration: StudentRepositoryCassandra/StudentRepository/src/main/resources/application.properties
+
+
