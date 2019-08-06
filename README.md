@@ -6,24 +6,24 @@ This is a Java program of a student data repository. It stores and catalogs the 
 
 ## Student table metadata
 **Field Name**        **Type**        **Type Of Key**       **Description**
-1. department           text          Partition Key         Department to which the student is enrolled to. Since the
+1. department :           text :         Partition Key :         Department to which the student is enrolled to. Since the
                                                             distribution of students is equal among the department, 
                                                             it is chosen as the partition key as there will be uniform 
                                                             distribution among each partition.
 
-2. roll                 int           Clustering Key        Roll number of the student. Under each partition (department), 
+2. roll :                int :          Clustering Key :        Roll number of the student. Under each partition (department), 
                                                             students’ records will be sorted (ASC) based on roll number.
                                                             
-3. year                 int           Clustering Key        Joining year of the student. This column consists of a constant value
+3. year :                 int :          Clustering Key :       Joining year of the student. This column consists of a constant value
                                                             across all records. When creating a Materialized view, 
                                                             this key can be used as partition key so that all the records 
                                                             will be present in a single partition and can be sorted accordingly
  
-4. firstName            text                -               First name of the student.
+4. firstName :            text :               - :             First name of the student.
 
-5. lastName             text                -               Last name of the student.
+5. lastName :            text :             - :             Last name of the student.
 
-6. club                 text                -               Club to which the student belongs to.
+6. club :               text :               - :              Club to which the student belongs to.
 
 
 API Collection (Postman collection link) : https://www.getpostman.com/collections/8c752e05b4f139885116
